@@ -1,8 +1,9 @@
-import React, { Component, createContext } from "react";
+import React, { Component, createContext, forwardRef, useImperativeHandle } from "react";
 //import sampleItems from './sampleItems';
-import { IMAGES } from '../Images2';
-// Helper functions
+import { IMAGES5X5 } from '../Images5x5';
+import { IMAGES10X10 } from '../Images10x10';
 
+// Helper functions
 function move(array, oldIndex, newIndex) {
   // if (newIndex >= array.length) {
   //   newIndex = array.length - 1;
@@ -25,24 +26,36 @@ function moveElement(array, index, offset) {
 }
 
 // Context
-
 const GridContext = createContext({ items: [] });
 
 export class GridProvider extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      items: IMAGES,
+      items: this.props.images,
       moveItem: this.moveItem,
       setItems: this.setItems
     };
   }
 
+  static getDerivedStateFromProps(props, state) {
+
+    if (props.puzzleSize.length !== state.items.length) {
+
+      return { items: props.images }
+    }
+    return null
+  }
+
+  // componentDidMount() {}
+  // componentWillUnmount() {}
+
   render() {
     return (
-      <GridContext.Provider value={this.state}>
+      (<GridContext.Provider onSizeChange={this.sizeChange} value={this.state} className={'cName'}>
         {this.props.children}
-      </GridContext.Provider>
+      </GridContext.Provider>)
     );
   }
 

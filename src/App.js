@@ -1,124 +1,60 @@
-import React, { useState, useContext } from 'react';
-import './App.css';
-import Picture from './components/Picture';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import './App.scss';
 import NavBar from './components/NavBar';
-import Mint from './components/Mint';
-import Rules from './components/Rules';
-import { ethers } from 'ethers';
-import ContractManagerJSON from './ContractsDatabase.json';
-import PartsCollectionJSON from './PartsCollection.json';
-import { Text, Flex } from '@chakra-ui/react';
-
-import DragItem from "./components/DragItem";
-import { Grid, GridImage, GridItem } from "./components/Grid";
-import GridContext from "./components/GridContext";
 import { GridProvider } from "./components/GridContext";
-import { IMAGES } from './Images2';
-import fullart from './assets/Pictures/FullArt.PNG'
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home';
+import Ranking from './pages/Ranking';
+import Profile from './pages/Profile';
+import ErrorPage from './pages/ErrorPage';
+import Footer from './Footer/Footer'
+import { IMAGES10X10 } from './Images10x10';
+import { IMAGES5X5 } from './Images5x5';
+import { ethers } from 'ethers';
+import PuzzlesContractJSON from './PuzzlesContract.json';
 
 // https://m-aragona.github.io/nft-parts-project/
 // npm run build
 // npm run deploy
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESSES
+const ALCHEMY_PROVIDER = process.env.REACT_APP_RINKEBY_RPC_URL
 
 function App() {
   const [accounts, setAccounts] = useState([]);
-  const [tokenId, setTokenId] = useState();
-  const [chainId, setchainId] = useState();
-  const [contractAddress, setContractAddress] = useState();
-  const isConnected = Boolean(accounts[0]);
-  const { items, moveItem } = useContext(GridContext);
+  const [puzzleSize, setPuzzleSize] = useState({ id: 0, name: '5x5', prop1: '0 0 20%', prop2: '100px 100px', length: 25 });
 
-  async function checkPieces() {
-    // Get Current Picture Contract Address
-    let provider = new ethers.providers.AlchemyProvider("rinkeby", process.env.RINKEBY_RPC_URL)
-    const contractManager = new ethers.Contract(
-      process.env.REACT_APP_CONTRACT_ADDRESSES,
-      ContractManagerJSON.abi,
-      provider
-    );
-    // console.log(contractManager)
-    const resCurrentContract = await contractManager.currentContract()
-    setContractAddress(resCurrentContract.toString())
+  let provider = new ethers.providers.AlchemyProvider("rinkeby", ALCHEMY_PROVIDER)
+  const contract = new ethers.Contract(
+    CONTRACT_ADDRESS,
+    PuzzlesContractJSON.abi,
+    provider
+  );
 
-    try {
-      const contract = new ethers.Contract(
-        contractAddress,
-        PartsCollectionJSON.abi,
-        provider
-      );
-      const response = await contract.tokenId();
-      setTokenId(response.toNumber() - 1)
-      // console.log("contract tokenId", tokenId)
-    } catch (err) {
-      // console.log("error: ", err)
+  function handlePuzzleSize(_puzzleSize) {
+    if (_puzzleSize === '5x5') {
+      return IMAGES5X5
+    } else if (_puzzleSize === '10x10') {
+      return IMAGES10X10
     }
-
-    provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    provider.on("network", async () => {
-      const network = await provider.getNetwork();
-      setchainId(network.chainId);
-
-    })
-
-    window.ethereum.on('accountsChanged', function (accounts) {
-      setAccounts(accounts)
-    })
-
   }
 
-  checkPieces()
-
   return (
-
-    <div className="App">
-
-      <NavBar className="NavBar" position='sticky' top='0' accounts={accounts} setAccounts={setAccounts} />
-
-      <Flex justify="space-between" height='70px'>
-        <Flex width="60%" paddingLeft='50px' >
-          <Text position='relative' top='-50px' fontSize="60px" fontWeight='bold'>Mint Art</Text>
-        </Flex>
-        <Flex justify='right' width="30%">
-          <div >
-            {isConnected ? (
-              <Text paddingRight='15px' float='right' position='relative'
-                top='-15px' textAlign='right' fontSize="17px" color="#64AB40">Your wallet: {accounts[0]}</Text>
-            ) : (<Text paddingRight='15px' float='right' position='relative'
-              top='-15px' textAlign='right' fontSize="17px" color="#D6517D">You must be connected to Mint!</Text>)}
-
-            <Text paddingRight='15px' float='right' position='relative'
-              top='-38px' textAlign='right' fontSize="17px" color="#D6517D">{chainId === 4 ? null : "Please Connect to Rinkeby Network to use this page."}</Text>
+    <GridProvider puzzleSize={puzzleSize} images={handlePuzzleSize(puzzleSize.name)}>
+      <div className="App">
+        <Router>
+          <NavBar className="NavBar" position='fixed' top='0' accounts={accounts} setAccounts={setAccounts} />
+          <div className='container'>
+            <Routes>
+              <Route path='puzzle-project-v1/' element={<Home contract={contract} />} />
+              <Route path='puzzle-project-v1/ranking' element={<Ranking contract={contract} />} />
+              <Route path='puzzle-project-v1/profile' element={<Profile account={accounts[0]} setPuzzleSize={setPuzzleSize} puzzleSize={puzzleSize} contract={contract} />} />
+              <Route path='*' element={<ErrorPage />} />
+            </Routes>
           </div>
-        </Flex>
-      </Flex>
-
-      <Flex justify="space-between" >
-        <Flex width="45%" paddingLeft='50px'>
-          <div>
-
-            {/* {tokenId > 25 ?
-              <Text fontWeight='bold' fontSize="25px">Congratulations! You have completed the image. Pieces owners will receive Full Art</Text>
-              :
-              <Text fontWeight='bold' fontSize="25px">There are still {tokenId === undefined ? "-" : (25 - tokenId)} NFT parts to mint!</Text>
-            }
-
-            {isConnected ?
-              <Mint tokenId={tokenId} chainId={chainId} accounts={accounts} setTokenId={setTokenId} contractAddress={contractAddress} setContractAddress={setContractAddress} />
-              : null}
-            <Rules /> */}
-            <img src={fullart} />
-          </div>
-        </Flex>
-        <Flex width="40%" textAlign='center'>
-          <div>
-            <Text fontWeight='bold' fontSize="17px">Contract Address: {contractAddress}</Text>
-            <Picture tokenId={tokenId} chainId={chainId} />
-          </div>
-        </Flex>
-      </Flex>
-    </div >
-
+        </Router>
+        <Footer />
+      </div >
+    </GridProvider >
   );
 }
 

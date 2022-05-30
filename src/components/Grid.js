@@ -18,12 +18,28 @@ export const GridImage = styled.div`
   align-items: center;
 
   background-image: ${props => `url("${props.src}")`};
-  background-size: cover;
-  background-position: 50%;
+  background-size: ${props => `${props.b_size}`};
+
 `;
+//  background-size: ${props => `${props.b_size}`};
+
+// export const GridImage = styled.div`
+//   flex-grow: 1;
+//   border: 1px solid white;
+
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+
+//   background-image: ${props => `url("${props.src}")`};
+//   background-size: cover;
+//   overflow: hidden;
+//   background-position: 50%;
+// `;
+
 
 const GridItemWrapper = styled.div`
-  flex: 0 0 20%;
+  flex: ${props => `${props._flex}`};
   display: flex;
   justify-content: center;
   align-items: stretch;

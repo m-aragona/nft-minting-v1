@@ -3,6 +3,7 @@ import { Box, Button, Flex, Image, Link, Spacer } from '@chakra-ui/react';
 import Facebook from "../assets/facebook_30.png";
 import Twitter from "../assets/twitter_30.png";
 import Instagram from "../assets/instagram_30.png";
+import { Link as Rrd_Link } from 'react-router-dom';
 
 // accounts y setAccounts son los parametros que se pasan desde el main App.js
 const NavBar = ({ accounts, setAccounts }) => {
@@ -40,16 +41,21 @@ const NavBar = ({ accounts, setAccounts }) => {
 
                 {/* Right Side - Sections and Connect */}
                 <Flex justify="space-around" align="center" width="25%" marginRight="10px">
-                    <Box textColor='white' fontSize='17px' cursor="pointer" >About</Box>
+                    <Rrd_Link to="/puzzle-project-v1/" >
+                        <Box textColor='white' fontSize='17px' cursor="pointer">Home</Box>
+                    </Rrd_Link>
                     <Spacer />
-                    {/* <Box textColor='white' onClick={handleMint} margin="0 15px" cursor="pointer" fontSize='40px'>Mint</Box> */}
-                    <Box textColor='white' cursor="pointer" fontSize='17px'>Team</Box>
+                    <Rrd_Link to="/puzzle-project-v1/profile">
+                        <Box textColor='white' fontSize='17px' cursor="pointer">My Puzzles</Box>
+                    </Rrd_Link>
+                    <Spacer />
+                    <Rrd_Link to="/puzzle-project-v1/ranking">
+                        <Box textColor='white' fontSize='17px' cursor="pointer">Ranking</Box>
+                    </Rrd_Link>
                     <Spacer />
 
-                    {/* style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'left' }} */}
                     {/* Connect */}
                     <div style={{}}>
-                        {/* borderStyle: 'solid', borderColor: 'white' */}
                         {isConnected ? (
                             <Button background="#64AB40"
                                 borderRadius="5px"

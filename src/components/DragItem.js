@@ -1,12 +1,12 @@
 import React, { memo, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-const DragItem = memo(({ id, onMoveItem, children }) => {
+const DragItem = memo(({ id, onMoveItem, children, puzzleIdFormat }) => {
   const ref = useRef(null);
 
   const [{ isDragging }, connectDrag] = useDrag({
-    type: "IMG",
-    item: { id, type: "IMG" },
+    type: puzzleIdFormat,
+    item: { id, type: puzzleIdFormat },
     collect: monitor => {
       return {
         isDragging: monitor.isDragging()
@@ -15,7 +15,7 @@ const DragItem = memo(({ id, onMoveItem, children }) => {
   });
 
   const [, connectDrop] = useDrop({
-    accept: "IMG",
+    accept: puzzleIdFormat,
     hover(hoveredOverItem) {
       if (hoveredOverItem.id !== id) {
         onMoveItem(hoveredOverItem.id, id);

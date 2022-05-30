@@ -1,15 +1,8 @@
-# Basic Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+How to mint and play:
+1. Connect your Metamask to this webpage
+2. In your Metamask, connect to Rinkeby Network
+3. Get some fake ETH from "https://rinkebyfaucet.com"
+4. Select any NFT of the list above and mint it.
+5. Go to MyPuzzles, select your minted NFT and complete the puzzle.
+6. Remember you can sell your NFT in "https://testnets.opensea.io" 
+7. Once you complete the puzzle you can claim points and you will be listed on the Global Ranking.
